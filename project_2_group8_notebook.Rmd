@@ -1,0 +1,261 @@
+---
+output:
+  word_document: default
+  html_document: default
+---
+
+
+```{r}
+install.packages('gridExtra')
+library(creditmodel)
+library(gridExtra)
+library(tidyverse)
+library(ggplot2)
+lendingclub
+```
+# =====================================
+# # Univariate Analysis - numeric
+# =====================================
+# ========================================================
+# 1. Create an appropriate plot to visualize the distribution of this variable. (4 marks)
+# ========================================================
+
+# =================
+# plot 1 - numeric
+# =================
+
+# =================
+# 
+#  This code creates a histogram of the variable "acc_open_past_24mths" in the "lendingclub" dataset. 
+# The histogram displays the frequency distribution of the number of trades opened in the past 24 months
+#
+# The lines of code following the histogram create two additional lines on the plot. The first line 
+# adds a red vertical line at the mean value of "acc_open_past_24mths", while the second line adds
+# a green vertical line at the median value of the same variable. These lines are added to help 
+# visually understand the central tendency of the data. The abline() function is used to add 
+# the vertical lines, and the arguments v sets the vertical position of the line, col sets the color of the line,
+# and lwd sets the width of the line
+# =================
+```{r}
+
+acc_open_past_24mths <- lendingclub$acc_open_past_24mths
+hist(acc_open_past_24mths, main="Histogram of acc_open_past_24mths", xlab="Number of trades opened in past 24 months", ylab="Frequency", col="blue")
+
+# Add mean and median lines to the histogram
+mean_line <- mean(acc_open_past_24mths)
+median_line <- median(acc_open_past_24mths)
+abline(v = mean_line, col="red", lwd=2)
+abline(v = median_line, col="green", lwd=2)
+```
+# =================
+# plot 2 - numeric 
+# =================
+
+# This code creates a box plot of the "all_util" variable in the "lendingclub" dataset.
+# The box plot is used to visualize the distribution of the data and identify outliers.
+# 
+# the box plot is drawn vertically (default), with "Balance to credit limit on all trades" as the main title,
+# "All trades" as the x-axis label, and "Balance" as the y-axis label. The box color is light blue, 
+# and the border is dark blue.
+
+# Create a box plot for all_util
+```{r}
+# Create a box plot for all_util
+boxplot(lendingclub$all_util,
+        main = "Balance to credit limit on all trades",
+        xlab = "All trades",
+        ylab = "Balance",
+        col = "lightblue",
+        border = "darkblue",
+        horizontal = FALSE
+)
+```
+# =================
+# plot 3 - numeric
+# =================
+
+
+# This code creates a histogram of the funded_amnt_inv variable in the lendingclub data frame. 
+# The main argument sets the title of the histogram, the xlab and ylab arguments label the x and y-axis 
+# respectively, and the col argument sets the color of the bars to blue.
+# 
+# The mean and median of the funded_amnt_inv variable are calculated and plotted as vertical lines 
+# on the histogram using the abline() function. The mean line is colored dark magenta and
+# the median line is colored green.
+
+```{r}
+hist(lendingclub$funded_amnt_inv, main="Histogram of acc_open_past_24mths", xlab="Number of trades opened in past 24 months", ylab="Frequency", col="blue", breaks=6)
+mean_line <- mean(lendingclub$funded_amnt_inv)
+median_line <- median(lendingclub$funded_amnt_inv)
+abline(v = mean_line, col="darkmagenta", lwd=2)
+abline(v = median_line, col="green", lwd=2)
+```
+# ============================================
+# Bivariate Analysis
+# ============================================
+
+# ========================================
+# Create an appropriate plot to visualize the relationship between the two variables.
+# =========================================
+
+# =================================
+# Both numeric- plot 1 
+# =================================
+
+# This code selects two variables from the lendingclub dataset, funded_amnt_inv and installment, 
+# and creates a scatterplot with a trend line using ggplot2.
+
+```{r}
+# select the variables
+selected_vars <- lendingclub %>%
+  select(funded_amnt_inv, installment)
+
+# create a scatterplot with trend line
+ggplot(selected_vars, aes(x = funded_amnt_inv, y = installment)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(x = "Funded Amount", y = "Installment") +
+  ggtitle("Relationship between Funded Amount and Installment") +
+  theme(plot.title = element_text(hjust = 0.5))
+```
+# =================================
+# Both numeric- plot 2 
+# =================================
+
+# This code creates a scatterplot between two variables, total_bal_ex_mort and tot_hi_cred_lim, 
+# from the lendingclub dataset.
+
+# The ggplot function is used to create the plot, with selected_vars as the data source.
+# The aes function is used to specify the variables to be plotted on the x- and y-axes. 
+# The geom_point function adds points to the plot, with color and alpha arguments used to adjust the 
+# appearance of the points.
+
+```{r}
+# select the variables
+selected_vars <- lendingclub %>%
+  select(total_bal_ex_mort, tot_hi_cred_lim)
+
+# create a scatterplot
+ggplot(selected_vars, aes(x = total_bal_ex_mort, y = tot_hi_cred_lim)) +
+  geom_point(color = "#4285F4", alpha = 0.5) +
+  labs(x = "Total Balance (excluding mortgage)", y = "Total High Credit/Limit") +
+  ggtitle("Relationship between Total Balance and Total High Credit/Limit") +
+  theme(plot.title = element_text(hjust = 0.5),
+        axis.title = element_text(size = 12, face = "bold"),
+        axis.text = element_text(size = 10)) +
+  scale_x_continuous(labels = scales::dollar_format(scale = 1e-6, suffix = "M")) +
+  scale_y_continuous(labels = scales::dollar_format(scale = 1e-6, suffix = "M")) +
+  theme(axis.line = element_line(color = "black")) +
+  geom_smooth()
+```
+# =================================
+# Both numeric- plot 3 
+# =================================
+
+# This code creates a scatterplot using the ggplot2 package in R. The data used for the plot is the lendingclub data frame.
+# 
+# The aes() function is used to define the aesthetics of the plot. The x aesthetic is set to avg_cur_bal, 
+# and the y aesthetic is set to mort_acc. These variables represent the average current balance and the 
+# number of mortgage accounts, respectively.
+
+```{r}
+ggplot(data = lendingclub, aes(x = avg_cur_bal, y = mort_acc)) +
+  geom_point(color = "#4285F4", alpha = 0.5) +
+  labs(x = "Average Current Balance", y = "Number of Mortgage Accounts") +
+  ggtitle("Relationship between Average Current Balance and Mortgage Accounts") +
+  theme(plot.title = element_text(hjust = 0.5),
+        axis.title = element_text(size = 12, face = "bold"),
+        axis.text = element_text(size = 10),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank()) +
+  scale_x_continuous(labels = scales::dollar_format(scale = 1e-3, suffix = "k")) +
+  theme(axis.line = element_line(color = "black"),
+        axis.line.x = element_line(color = "gray50"),
+        axis.line.y = element_line(color = "gray50")) +
+  geom_smooth()
+```
+# =================================
+# one numeric and one categorical - plot 1
+# =================================
+
+# This code selects the loan_status and all_util variables from the lendingclub dataset and creates
+# a new variable all_util_bin by binning the all_util variable into intervals of width 20, 
+# with a range from 0 to 200. The loan_status variable is converted to a factor. 
+# The code then creates a stacked bar plot with all_util_bin on the x-axis and loan_status on the fill aesthetic. 
+# The plot shows the count of loans in each loan_status category for each interval of all_util_bin.
+# The legend for loan_status is labeled "Loan Status".
+
+```{r}
+# select variables
+selected_vars <- lendingclub %>%
+  select(loan_status, all_util)
+
+# convert loan_status to a factor
+selected_vars$loan_status <- as.factor(selected_vars$loan_status)
+
+# create bins for total credit utilization ratio
+selected_vars$all_util_bin <- cut(selected_vars$all_util, 
+                                  breaks = seq(0, 200, by = 20), 
+                                  labels = seq(0, 180, by = 20))
+
+# create a stacked bar plot
+ggplot(selected_vars, aes(x = all_util_bin, fill = loan_status)) +
+  geom_bar() +
+  labs(x = "Total Credit Utilization Ratio", y = "Count") +
+  ggtitle("Loan Status by Total Credit Utilization Ratio") +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  scale_fill_discrete(name = "Loan Status")
+```
+# =================================
+# one numeric and one categorical - plot 2 
+# =================================
+
+# This code calculates the mean annual income for each loan grade in the lendingclub dataset 
+# and creates a bar graph to visualize the results.
+# 
+# The first line of code uses the group_by() function to group the dataset by loan grade and the summarize()
+# function to calculate the mean annual income for each group. The resulting dataframe mean_inc_by_grade 
+# has two columns: grade and mean_annual_inc.
+
+```{r}
+# calculate mean income for each grade
+mean_inc_by_grade <- lendingclub %>%
+  group_by(grade) %>%
+  summarize(mean_annual_inc = mean(annual_inc))
+
+# create a bar graph
+ggplot(mean_inc_by_grade, aes(x = grade, y = mean_annual_inc, fill = grade)) +
+  geom_col(alpha = 0.8) +
+  labs(x = "Loan Grade", y = "Mean Annual Income", fill = "Loan Grade") +
+  ggtitle("Mean Annual Income by Loan Grade") +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  scale_fill_brewer(type = "qual", palette = "Set1") +
+  theme_minimal()
+```
+
+# =================================
+# one numeric and one categorical - plot 3
+# =================================
+
+# This code selects two variables, dti and loan_status, from the lendingclub dataset. 
+# It then converts loan_status to a factor variable. Finally, it creates a scatterplot using ggplot()
+# from the ggplot2 package with loan_status on the x-axis, dti on the y-axis, and loan_status 
+# as the color variable. The title of the plot is "Relationship between Loan Status and Debt-to-Income Ratio".
+
+```{r}
+# select the variables
+selected_vars <- lendingclub %>%
+  select(dti, loan_status)
+
+# convert loan_status to a factor
+selected_vars$loan_status <- as.factor(selected_vars$loan_status)
+
+# create a scatterplot
+ggplot(selected_vars, aes(x = loan_status, y = dti, color = loan_status)) +
+  geom_point() +
+  labs(x = "Loan Status", y = "Debt-to-Income Ratio") +
+  ggtitle("Relationship between Loan Status and Debt-to-Income Ratio") +
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
